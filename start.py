@@ -1,128 +1,74 @@
-#    This file is part of the Compressor distribution.
-#    Copyright (c) 2021 Danish_00
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, version 3.
-#
-#    This program is distributed in the hope that it will be useful, but
-#    WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-#    General Public License for more details.
-#
-#    License can be found in <https://github.com/1Danish-00/CompressorBot/blob/main/License> .
+from telethon import TelegramClient, events, Button
+from download_from_url import download_file, get_size
+from file_handler import send_to_transfersh_async, progress
+import os
+import time
+import datetime
+import aiohttp
+import asyncio
+
+api_id = int(os.environ.get("API_ID"))
+api_hash = os.environ.get("API_HASH")
+bot_token =os.environ.get("BOT_TOKEN")
+                          
+download_path = "Downloads/"
+
+bot = TelegramClient('Uploader bot', api_id, api_hash).start(bot_token=bot_token)
 
 
-from helper._get import *
+@bot.on(events.NewMessage(pattern='/start'))
+async def start(event):
+    """Send a message when the command /start is issued."""
+    dict_ = {
+            "Updates Channel":"https://t.me/disneygrou",
+            "Support Group":"https://t.me/disneyteamchat",
+            "Developer":"https://t.me/Doreamonfans2",
+            "Backup Channel":"https://t.me/disneygroubackup"}
+    buttons = [[Button.url(k, v)] for k,v in dict_.items()]
 
-LOGS.info("Starting...")
+    await event.respond('Hi!\nMy Name Is Disney Team Transfer Uploader Bot Send me any file or direct download link and I upload and get the transfer.sh download link Bot Made by ❤ In 🇮🇳India by [Doreamonfans](https://t.me/doreamonfans2)', buttons=buttons)
+    raise events.StopPropagation
 
+@bot.on(events.NewMessage)
+async def echo(update):
+    """Echo the user message."""
+    msg = await update.respond("Processing Plz Wait😁...")
+    
+    try:
+        if not os.path.isdir(download_path):
+            os.mkdir(download_path)
+            
+        start = time.time()
+        
+        if not update.message.message.startswith("/") and not update.message.message.startswith("http") and update.message.media:
+            await msg.edit("**Downloading starting😉...**")
+            file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
+                progress(d, t, msg, start)))
+        else:
+            url = update.text
+            filename = os.path.join(download_path, os.path.basename(url))
+            file_path = await download_file(update.text, filename, msg, start, bot)
+            
+        print(f"file downloaded to {file_path}")
+        try:
+            await msg.edit("Download finish!\n\n**Now uploading plz wait😍...**")
+            download_link, final_date, size = await send_to_transfersh_async(file_path, msg)
+            name = os.path.basename(file_path)
+            await msg.edit(f"**Name: **`{name}`\n**Size:** `{size}`\n**Link:** {download_link} \n**Owner:** [Doreamonfans1](https://t.me/doreamonfans1)")
+        except Exception as e:
+            print(e)
+            await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
+        finally:
+            os.remove(file_path)
+            print("Deleted file :", file_path)
+    except Exception as e:
+        print(e)
+        await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
 
-######## Connect ########
+def main():
+    """Start the bot."""
+    print("\nBot started visit @disneygrou For more updates...\n")
+    bot.run_until_disconnected()
 
-
-try:
-    cbot = TelegramClient("bot", APP_ID, API_HASH).start(bot_token=BOT_TOKEN)
-except Exception as e:
-    LOGS.info("Environment vars are missing! Kindly recheck.")
-    LOGS.info("Bot is quiting...")
-    LOGS.info(str(e))
-    exit()
-
-
-####### GENERAL CMDS ########
-
-
-@cbot.on(events.NewMessage(pattern="/start"))
-async def _(e):
-    await start(e)
-
-
-@cbot.on(events.NewMessage(pattern="/ping"))
-async def _(e):
-    await up(e)
-
-
-@cbot.on(events.NewMessage(pattern="/help"))
-async def _(e):
-    await help(e)
-
-
-######## Callbacks #########
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"sshot(.*)")))
-async def _(e):
-    await screenshot(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"gsmpl(.*)")))
-async def _(e):
-    await sample(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"skip(.*)")))
-async def _(e):
-    await skip(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"stats(.*)")))
-async def _(e):
-    await stats(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"encc(.*)")))
-async def _(e):
-    await encc(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"sencc(.*)")))
-async def _(e):
-    await sencc(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"ccom(.*)")))
-async def _(e):
-    await ccom(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"back(.*)")))
-async def _(e):
-    await back(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile("ihelp")))
-async def _(e):
-    await ihelp(e)
-
-
-@cbot.on(events.callbackquery.CallbackQuery(data=re.compile("beck")))
-async def _(e):
-    await beck(e)
-
-
-########## Direct ###########
-
-
-@cbot.on(events.NewMessage(pattern="/eval"))
-async def _(e):
-    await eval(e)
-
-
-@cbot.on(events.NewMessage(pattern="/bash"))
-async def _(e):
-    await bash(e)
-
-
-########## AUTO ###########
-
-
-@cbot.on(events.NewMessage(incoming=True))
-async def _(e):
-    await encod(e)
-
-
-########### Start ############
-
-LOGS.info("Bot has started.")
-cbot.run_until_disconnected()
+if __name__ == '__main__':
+    main()
