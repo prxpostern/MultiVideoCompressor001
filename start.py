@@ -62,6 +62,7 @@ async def echo(update):
             onlyfilename = os.path.splitext(name)[0]
             await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
             
+            file_loc2 = f"{file_path}_.mp3"
             size = os.path.getsize(file_loc2)
             size_of_file = get_size(size)
 
@@ -69,8 +70,9 @@ async def echo(update):
             try:
               await bot.send_audio(
                 update.message,
-                audio=f"{file_path}_.mp3",
-                file_name=f"{onlyfilename}.mp3"
+                audio=file_loc2,
+                file_name=f"{onlyfilename}.mp3",
+                caption=f"`{onlyfilename}.mp3` \n `{size_of_file}`"
               )
             except Exception as e:
               print(e)
