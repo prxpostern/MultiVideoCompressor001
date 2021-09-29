@@ -6,6 +6,7 @@ import time
 import datetime
 import aiohttp
 import asyncio
+from tools import execute
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
@@ -51,15 +52,34 @@ async def echo(update):
             
         print(f"file downloaded to {file_path}")
         try:
-            await msg.edit("Download finish!\n\n**Now uploading plz wait😍...**")
-            download_link, final_date, size = await send_to_transfersh_async(file_path, msg)
+            await msg.edit("Encoding ...\n\n**plz wait😍...**")
+            out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' -vn -sn -c:a libmp3lame -ab 256k '{file_path}_.mp3' -y")
+            if rcode != 0:
+              await msg.edit("**Error Occured. See Logs for more info.**")
+              print(err)
+            
             name = os.path.basename(file_path)
-            await msg.edit(f"**Name: **`{name}`\n**Size:** `{size}`\n**Link:** {download_link} \n**Owner:** [Doreamonfans1](https://t.me/doreamonfans1)")
+            onlyfilename = os.path.splitext(name)[0]
+            await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
+            
+            size = os.path.getsize(file_loc2)
+            size_of_file = get_size(size)
+
+            c_time = time.time()    
+            try:
+              await bot.send_audio(
+                update.message,
+                audio=f"{file_path}_.mp3",
+                file_name=f"{onlyfilename}.mp3"
+              )
+            except Exception as e:
+              print(e)
         except Exception as e:
             print(e)
             await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
         finally:
             os.remove(file_path)
+            os.remove(f"{file_path}_.mp3")
             print("Deleted file :", file_path)
     except Exception as e:
         print(e)
@@ -67,7 +87,7 @@ async def echo(update):
 
 def main():
     """Start the bot."""
-    print("\nBot started visit @disneygrou For more updates...\n")
+    print("\nBot started ...\n")
     bot.run_until_disconnected()
 
 if __name__ == '__main__':
