@@ -82,8 +82,8 @@ async def echo(update):
     try:
       out, err, rcode, pid = await execute(f"{finalcmd}")
       if rcode != 0:
-      await msg.edit("**Error Occured. See Logs for more info.**")
-      print(err)
+        await msg.edit("**Error Occured. See Logs for more info.**")
+        print(err)
 
       size = os.path.getsize(file_loc2)
       size_of_file = get_size(size)
