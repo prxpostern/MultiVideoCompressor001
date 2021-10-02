@@ -54,20 +54,22 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
-    await msg.edit(f"**Enter New File Name with Extension :**")
+    await msg.edit(f"**Enter The Extension Only : like mkv, m4a, wmv, mp3 ...**")
     async with bot.conversation(update.message.chat_id) as cv:
-      n1 = cv.wait_event(events.NewMessage(update.message.chat_id))
-      n2 = await n1
+      ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
+      ext2 = await ext1
     
     await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
     async with bot.conversation(update.message.chat_id) as cv2:
       ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
     
-    newName = n2.text
-    ffcmd3 = ffcmd2.text
-    file_loc2 = f"/downloads/{newName}"
     await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
+    
+    ext = ext2.text
+    ffcmd3 = ffcmd2.text
+    ponlyname = os.path.splitext(file_path)[0]
+    file_loc2 = f"{ponlyname}.{ext}"
     out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' '{ffcmd3}' '{file_loc2}' -y")
     if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
@@ -75,17 +77,18 @@ async def echo(update):
 
     size = os.path.getsize(file_loc2)
     size_of_file = get_size(size)
+    bonlyname = os.path.basename(file_loc2)[0]
     #name1 = os.path.basename(newName)
     #onlyfilename = os.path.splitext(name1)[0]
             
-    await msg.edit(f"**Name: **`{newName}`\n is Uploading ....**")
+    await msg.edit(f"**Name: **`{bonlyname}`\n is Uploading ....**")
             
     c_time = time.time()    
     try:
       await bot.send_file(
         update.message.chat_id,
         file=file_loc2,
-        caption=f"`{newName}.mka` \n `{size_of_file}`",
+        caption=f"**Filename: **`{bonlyname}` \n\n **Size: **`{size_of_file}`",
         reply_to=update.message
       )
     except Exception as e:
