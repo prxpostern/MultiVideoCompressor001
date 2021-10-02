@@ -65,14 +65,14 @@ async def echo(update):
             name = os.path.basename(file_path)
             onlyfilename = os.path.splitext(name)[0]
             
-            await bot.send_message(update, f"{size_of_file}")
+            await update.client.send_message(update, f"{size_of_file}")
             
             await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
             
             c_time = time.time()    
             try:
-              await bot.send_file(
-                update,
+              await update.client.send_file(
+                update.chat_id,
                 file=file_loc2,
                 file_size=size_of_file,
                 caption=f"`{onlyfilename}.mp3` \n `{size_of_file}`"
