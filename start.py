@@ -56,19 +56,23 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable !\n\n**Error:** {e}")
 ##############################################################
-    await msg.edit(f"**Enter The Extension with . : like .mkv, .m4a, .wmv, .mp3 ...\n\n for video files use video extension and for audio use audio extension**")
+    extmsg = await update.respond(f"**Enter The Extension with . : like .mkv, .m4a, .wmv, .mp3 ...\n\n for video files use video extension and for audio use audio extension**")
     async with bot.conversation(update.message.chat_id) as cv:
       ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       ext2 = await ext1
       ext = ext2.text
       await cv.cancel_all()
     
-    await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
+    await extmsg.delete()
+    
+    ffcmdmsg = await update.respond("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
     async with bot.conversation(update.message.chat_id) as cv2:
       ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
       ffcmd3 = ffcmd2.text
       await cv2.cancel_all()
+    
+    await ffcmdmsg.delete()
     
     await asyncio.sleep(10)
     await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
