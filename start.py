@@ -2,6 +2,7 @@ from telethon import TelegramClient, events, Button
 from download_from_url import download_file, get_size
 from file_handler import send_to_transfersh_async, progress
 import os
+import cryptg   #For Increasing speed of File Downloading
 import time
 import datetime
 import aiohttp
