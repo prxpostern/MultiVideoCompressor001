@@ -54,7 +54,7 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
-    await msg.edit(f"**{file_path}Enter New File Name with Extension :**")
+    await msg.edit(f"**Enter New File Name with Extension :**")
     async with bot.conversation(update.message.chat_id) as cv:
       n1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       n2 = await n1
@@ -66,13 +66,13 @@ async def echo(update):
     
     newName = n2.text
     ffcmd3 = ffcmd2.text
+    file_loc2 = f"/downloads/{newName}"
     await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
-    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' '{ffcmd3}' './app/downloads/{newName}' -y")
+    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' '{ffcmd3}' '{file_loc2}' -y")
     if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
-              
-    file_loc2 = f"./app/downloads/{newName}"
+
     size = os.path.getsize(file_loc2)
     size_of_file = get_size(size)
     #name1 = os.path.basename(newName)
