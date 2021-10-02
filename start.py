@@ -54,13 +54,14 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
+    await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
     async with bot.conversation(update.message.chat_id) as cv:
       ffcmd = cv.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
     
     ffcmd3 = ffcmd2.text
-    await msg.edit(f"{ffcmd3}{ffcmd2}{ffcmd}Encoding ...\n\n**plz wait😍...**")
-    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' -vn -sn -c:a aac -ab 32k '{file_path}_.mka' -y")
+    await msg.edit("Encoding ...\n\n**plz wait😍...**")
+    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' {ffcmd3} '{file_path}_.mka' -y")
     if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
