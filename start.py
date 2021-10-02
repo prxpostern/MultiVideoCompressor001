@@ -54,12 +54,12 @@ async def echo(update):
         print(f"file downloaded to {file_path}")
         try:
             await msg.edit("Encoding ...\n\n**plz wait😍...**")
-            out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' -vn -sn -c:a libmp3lame -ab 256k '{file_path}_.mp3' -y")
+            out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' -vn -sn -c:a copy '{file_path}_.mka' -y")
             if rcode != 0:
               await msg.edit("**Error Occured. See Logs for more info.**")
               print(err)
             
-            file_loc2 = f"{file_path}_.mp3"
+            file_loc2 = f"{file_path}_.mka"
             size = os.path.getsize(file_loc2)
             size_of_file = get_size(size)
             name = os.path.basename(file_path)
