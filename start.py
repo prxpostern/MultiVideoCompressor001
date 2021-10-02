@@ -66,7 +66,7 @@ async def echo(update):
       ffcmd2 = await ffcmd
       ffcmd3 = ffcmd2.text
     
-    await asyncio.sleep(30)
+    #await asyncio.sleep(30)
     await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
   
     ponlyname = os.path.splitext(file_path)[0]
