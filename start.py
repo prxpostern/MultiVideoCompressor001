@@ -75,7 +75,7 @@ async def echo(update):
     c_time = time.time()    
     try:
       await bot.send_file(
-        userid=update.sender_id,
+        update.message.chat_id,
         file=file_loc2,
         caption=f"`{onlyfilename}.mka` \n `{size_of_file}`",
         reply_to=update.message
