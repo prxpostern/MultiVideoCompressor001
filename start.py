@@ -75,20 +75,23 @@ async def echo(update):
     
     await msg.edit(f"{finalcmd}\n\nEncoding ...\n\n**plz wait😍...**")
     
-    out, err, rcode, pid = await execute(f"{finalcmd}")
-    if rcode != 0:
-        await msg.edit("**Error Occured. See Logs for more info.**")
-        print(err)
+    try:
+      out, err, rcode, pid = await execute(f"{finalcmd}")
+      if rcode != 0:
+      await msg.edit("**Error Occured. See Logs for more info.**")
+      print(err)
 
-    size = os.path.getsize(file_loc2)
-    size_of_file = get_size(size)
-    bonlyname = os.path.basename(file_loc2)[0]
-    #name1 = os.path.basename(newName)
-    #onlyfilename = os.path.splitext(name1)[0]
+      size = os.path.getsize(file_loc2)
+      size_of_file = get_size(size)
+      bonlyname = os.path.basename(file_loc2)[0]
+      #name1 = os.path.basename(newName)
+      #onlyfilename = os.path.splitext(name1)[0]
             
-    #await msg.edit(f"**Name: **`{bonlyname}`\n is Uploading ....**")
+      #await msg.edit(f"**Name: **`{bonlyname}`\n is Uploading ....**")
             
-    c_time = time.time()    
+      #c_time = time.time()
+    except Exception as e:
+      print(e)  
     try:
       await bot.send_file(
         update.message.chat_id,
