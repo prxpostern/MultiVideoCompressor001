@@ -46,12 +46,12 @@ async def echo(update):
             await msg.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
                 progress(d, t, msg, start)))
-            tgfilemsg = await bot.send_message(f"Telegram File is Downloaded in : \n\n {file_path}")
+            tgfilemsg = await update.respond(f"Telegram File is Downloaded in : \n\n {file_path}")
         else:
             url = update.text
             filename = os.path.join(download_path, os.path.basename(url))
             file_path = await download_file(update.text, filename, msg, start, bot)
-            urlfilemsg = await bot.send_message(f"URL File is Downloaded in : \n\n {file_path}")
+            urlfilemsg = await update.respond(f"URL File is Downloaded in : \n\n {file_path}")
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable !\n\n**Error:** {e}")
@@ -61,16 +61,16 @@ async def echo(update):
       ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       ext2 = await ext1
       ext = ext2.text
-      return (ext)
+      await cv.cancel_all()
     
     await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
     async with bot.conversation(update.message.chat_id) as cv2:
       ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
       ffcmd3 = ffcmd2.text
-      return (ffcmd3)
+      await cv2.cancel_all()
     
-    #await asyncio.sleep(30)
+    await asyncio.sleep(10)
     await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
   
     ponlyname = os.path.splitext(file_path)[0]
