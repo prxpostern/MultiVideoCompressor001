@@ -69,8 +69,12 @@ async def echo(update):
     ext = ext2.text
     ffcmd3 = ffcmd2.text
     ponlyname = os.path.splitext(file_path)[0]
-    file_loc2 = f"{ponlyname}.{ext}"
-    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' '{ffcmd3}' '{file_loc2}' -y")
+    file_loc2 = f"{ponlyname}{ext}"
+    finalcmd = f"ffmpeg -i '{file_path}' {ffcmd3} '{file_loc2}' -y"
+    
+    await msg.edit(f"{finalcmd}\n\nEncoding ...\n\n**plz wait😍...**")
+    
+    out, err, rcode, pid = await execute(f"{finalcmd}")
     if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
@@ -81,7 +85,7 @@ async def echo(update):
     #name1 = os.path.basename(newName)
     #onlyfilename = os.path.splitext(name1)[0]
             
-    await msg.edit(f"**Name: **`{bonlyname}`\n is Uploading ....**")
+    #await msg.edit(f"**Name: **`{bonlyname}`\n is Uploading ....**")
             
     c_time = time.time()    
     try:
@@ -93,7 +97,7 @@ async def echo(update):
       )
     except Exception as e:
       print(e)
-      await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
+      #await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
 
     os.remove(file_path)
     os.remove(file_loc2)
