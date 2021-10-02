@@ -59,23 +59,23 @@ async def echo(update):
               await msg.edit("**Error Occured. See Logs for more info.**")
               print(err)
             
-            name = os.path.basename(file_path)
-            onlyfilename = os.path.splitext(name)[0]
-            await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
-            
             file_loc2 = f"{file_path}_.mp3"
             size = os.path.getsize(file_loc2)
             size_of_file = get_size(size)
-
+            name = os.path.basename(file_path)
+            onlyfilename = os.path.splitext(name)[0]
+            
+            await bot.send_message(update, f"{size_of_file}")
+            
+            await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
+            
             c_time = time.time()    
             try:
               await bot.send_file(
-                update.chat_id,
+                update,
                 file=file_loc2,
                 file_size=size_of_file,
-                caption=f"`{onlyfilename}.mp3` \n `{size_of_file}`",
-                supports_streaming=true,
-                force_document=false
+                caption=f"`{onlyfilename}.mp3` \n `{size_of_file}`"
               )
             except Exception as e:
               print(e)
@@ -85,7 +85,6 @@ async def echo(update):
         finally:
             os.remove(file_path)
             os.remove(f"{file_path}_.mp3")
-            print("Deleted file :", file_path)
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
