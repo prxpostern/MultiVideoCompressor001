@@ -61,7 +61,7 @@ async def echo(update):
       ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       ext2 = await ext1
       ext = ext2.text
-      await cv.cancel_all()
+      #await cv.cancel_all()
     
     await extmsg.delete()
     
@@ -70,7 +70,7 @@ async def echo(update):
       ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
       ffcmd3 = ffcmd2.text
-      await cv2.cancel_all()
+      #await cv2.cancel_all()
     
     await ffcmdmsg.delete()
     
