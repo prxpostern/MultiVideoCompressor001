@@ -8,7 +8,6 @@ import datetime
 import aiohttp
 import asyncio
 from tools import execute
-from pyromod import listen
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
@@ -37,7 +36,11 @@ async def echo(update):
     """Echo the user message."""
     msg = await update.respond("Processing Plz Wait😁...")
     
-    fname = await bot.ask(update.message.chat_id,'Enter New Filename', filters=filters.text)
+    async with bot.conversation(update.message.chat_id) as cv:
+      ffcmd = cv.wait_event(events.NewMessage(update.message.chat_id))
+      ffcmd2 = await ffcmd
+    
+    await msg.edit(f"{ffcmd2.text}")
     
     try:
         if not os.path.isdir(download_path):
