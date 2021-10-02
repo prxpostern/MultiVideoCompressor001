@@ -8,6 +8,7 @@ import datetime
 import aiohttp
 import asyncio
 from tools import execute
+from pyromod import listen
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
@@ -36,6 +37,8 @@ async def echo(update):
     """Echo the user message."""
     msg = await update.respond("Processing Plz Wait😁...")
     
+    fname = await bot.ask(update.message.chat_id,'Enter New Filename', filters=filters.text)
+    
     try:
         if not os.path.isdir(download_path):
             os.mkdir(download_path)
@@ -53,9 +56,7 @@ async def echo(update):
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
-            
-    print(f"file downloaded to {file_path}")
-        
+             
     await msg.edit("Encoding ...\n\n**plz wait😍...**")
     out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' -vn -sn -c:a aac -ab 32k '{file_path}_.mka' -y")
     if rcode != 0:
@@ -67,8 +68,6 @@ async def echo(update):
     size_of_file = get_size(size)
     name = os.path.basename(file_path)
     onlyfilename = os.path.splitext(name)[0]
-            
-    #await bot.send_message(f"{size_of_file}")
             
     await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
             
