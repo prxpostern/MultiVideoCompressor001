@@ -54,31 +54,37 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
-    await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
+    await msg.edit("**Enter New File Name with Extension :**")
     async with bot.conversation(update.message.chat_id) as cv:
-      ffcmd = cv.wait_event(events.NewMessage(update.message.chat_id))
+      n1 = cv.wait_event(events.NewMessage(update.message.chat_id))
+      n2 = await n1
+    
+    await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
+    async with bot.conversation(update.message.chat_id) as cv2:
+      ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
     
+    newName = n2.text
     ffcmd3 = ffcmd2.text
-    await msg.edit("Encoding ...\n\n**plz wait😍...**")
-    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' {ffcmd3} '{file_path}_.mka' -y")
+    await msg.edit(f"{file_path}Encoding ...\n\n**plz wait😍...**")
+    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' '{ffcmd3}' '{newName}' -y")
     if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
               
-    file_loc2 = f"{file_path}_.mka"
-    size = os.path.getsize(file_loc2)
+    #file_loc2 = f"{file_path}_.mka"
+    size = os.path.getsize(newName)
     size_of_file = get_size(size)
-    name = os.path.basename(file_path)
-    onlyfilename = os.path.splitext(name)[0]
+    name1 = os.path.basename(newName)
+    onlyfilename = os.path.splitext(name1)[0]
             
-    await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
+    await msg.edit(f"**Name: **`{newName}`\n is Uploading ....**")
             
     c_time = time.time()    
     try:
       await bot.send_file(
         update.message.chat_id,
-        file=file_loc2,
+        file=newName,
         caption=f"`{onlyfilename}.mka` \n `{size_of_file}`",
         reply_to=update.message
       )
