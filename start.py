@@ -68,11 +68,13 @@ async def echo(update):
 
             c_time = time.time()    
             try:
-              await bot.send_audio(
-                update.message,
-                audio=file_loc2,
-                file_name=f"{onlyfilename}.mp3",
-                caption=f"`{onlyfilename}.mp3` \n `{size_of_file}`"
+              await bot.send_file(
+                update.chat_id,
+                file=file_loc2,
+                file_size=size_of_file,
+                caption=f"`{onlyfilename}.mp3` \n `{size_of_file}`",
+                supports_streaming=true,
+                force_document=false
               )
             except Exception as e:
               print(e)
