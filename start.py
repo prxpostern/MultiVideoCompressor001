@@ -54,20 +54,20 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
-    await msg.edit(f"**Enter The Extension Only : like mkv, m4a, wmv, mp3 ...**")
+    await msg.edit(f"**Enter The Extension with . : like .mkv, .m4a, .wmv, .mp3 ...\n\n for video files use video extension and for audio use audio extension**")
     async with bot.conversation(update.message.chat_id) as cv:
       ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       ext2 = await ext1
+      ext = ext2.text
     
     await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
     async with bot.conversation(update.message.chat_id) as cv2:
       ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
+      ffcmd3 = ffcmd2.text
     
     await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
-    
-    ext = ext2.text
-    ffcmd3 = ffcmd2.text
+  
     ponlyname = os.path.splitext(file_path)[0]
     file_loc2 = f"{ponlyname}{ext}"
     finalcmd = f"ffmpeg -i '{file_path}' {ffcmd3} '{file_loc2}' -y"
