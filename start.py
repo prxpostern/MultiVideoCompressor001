@@ -54,7 +54,7 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
-    await msg.edit("**Enter New File Name with Extension :**")
+    await msg.edit(f"**{file_path}Enter New File Name with Extension :**")
     async with bot.conversation(update.message.chat_id) as cv:
       n1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       n2 = await n1
@@ -66,17 +66,17 @@ async def echo(update):
     
     newName = n2.text
     ffcmd3 = ffcmd2.text
-    await msg.edit(f"{file_path}Encoding ...\n\n**plz wait😍...**")
-    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' '{ffcmd3}' '{newName}' -y")
+    await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
+    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' '{ffcmd3}' './app/downloads/{newName}' -y")
     if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
               
-    #file_loc2 = f"{file_path}_.mka"
-    size = os.path.getsize(newName)
+    file_loc2 = f"./app/downloads/{newName}"
+    size = os.path.getsize(file_loc2)
     size_of_file = get_size(size)
-    name1 = os.path.basename(newName)
-    onlyfilename = os.path.splitext(name1)[0]
+    #name1 = os.path.basename(newName)
+    #onlyfilename = os.path.splitext(name1)[0]
             
     await msg.edit(f"**Name: **`{newName}`\n is Uploading ....**")
             
@@ -84,8 +84,8 @@ async def echo(update):
     try:
       await bot.send_file(
         update.message.chat_id,
-        file=newName,
-        caption=f"`{onlyfilename}.mka` \n `{size_of_file}`",
+        file=file_loc2,
+        caption=f"`{newName}.mka` \n `{size_of_file}`",
         reply_to=update.message
       )
     except Exception as e:
@@ -93,7 +93,7 @@ async def echo(update):
       await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
 
     os.remove(file_path)
-    os.remove(f"{file_path}_.mka")
+    os.remove(file_loc2)
 
 def main():
     """Start the bot."""
