@@ -50,45 +50,42 @@ async def echo(update):
             url = update.text
             filename = os.path.join(download_path, os.path.basename(url))
             file_path = await download_file(update.text, filename, msg, start, bot)
-            
-        print(f"file downloaded to {file_path}")
-        try:
-            await msg.edit("Encoding ...\n\n**plz wait😍...**")
-            out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' -vn -sn -c:a aac -ab 32k '{file_path}_.mka' -y")
-            if rcode != 0:
-              await msg.edit("**Error Occured. See Logs for more info.**")
-              print(err)
-            
-            file_loc2 = f"{file_path}_.mka"
-            size = os.path.getsize(file_loc2)
-            size_of_file = get_size(size)
-            name = os.path.basename(file_path)
-            onlyfilename = os.path.splitext(name)[0]
-            
-            await bot.send_message(f"{size_of_file}")
-            
-            await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
-            
-            c_time = time.time()    
-            try:
-              await bot.send_file(
-                userid=update.sender_id,
-                file=file_loc2,
-                file_size=size_of_file,
-                caption=f"`{onlyfilename}.mka` \n `{size_of_file}`",
-                reply_to=update.message
-              )
-            except Exception as e:
-              print(e)
-        except Exception as e:
-            print(e)
-            await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
-        finally:
-            os.remove(file_path)
-            os.remove(f"{file_path}_.mka")
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
+            
+    print(f"file downloaded to {file_path}")
+        
+    await msg.edit("Encoding ...\n\n**plz wait😍...**")
+    out, err, rcode, pid = await execute(f"ffmpeg -i '{file_path}' -vn -sn -c:a aac -ab 32k '{file_path}_.mka' -y")
+    if rcode != 0:
+        await msg.edit("**Error Occured. See Logs for more info.**")
+        print(err)
+              
+    file_loc2 = f"{file_path}_.mka"
+    size = os.path.getsize(file_loc2)
+    size_of_file = get_size(size)
+    name = os.path.basename(file_path)
+    onlyfilename = os.path.splitext(name)[0]
+            
+    #await bot.send_message(f"{size_of_file}")
+            
+    await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
+            
+    c_time = time.time()    
+    try:
+      await bot.send_file(
+        userid=update.sender_id,
+        file=file_loc2,
+        caption=f"`{onlyfilename}.mka` \n `{size_of_file}`",
+        reply_to=update.message
+      )
+    except Exception as e:
+      print(e)
+      await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
+
+    os.remove(file_path)
+    os.remove(f"{file_path}_.mka")
 
 def main():
     """Start the bot."""
