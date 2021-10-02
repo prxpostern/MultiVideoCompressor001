@@ -35,7 +35,7 @@ async def start(event):
 async def echo(update):
     """Echo the user message."""
     msg = await update.respond("Processing Plz Wait😁...")
-    
+##############################################################
     try:
         if not os.path.isdir(download_path):
             os.mkdir(download_path)
@@ -46,25 +46,29 @@ async def echo(update):
             await msg.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
                 progress(d, t, msg, start)))
+            tgfilemsg = await bot.send_message(f"Telegram File is Downloaded in : \n\n {file_path}")
         else:
             url = update.text
             filename = os.path.join(download_path, os.path.basename(url))
             file_path = await download_file(update.text, filename, msg, start, bot)
+            urlfilemsg = await bot.send_message(f"URL File is Downloaded in : \n\n {file_path}")
     except Exception as e:
         print(e)
-        await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
-    
+        await msg.edit(f"Download link is invalid or not accessable !\n\n**Error:** {e}")
+##############################################################
     await msg.edit(f"**Enter The Extension with . : like .mkv, .m4a, .wmv, .mp3 ...\n\n for video files use video extension and for audio use audio extension**")
     async with bot.conversation(update.message.chat_id) as cv:
       ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       ext2 = await ext1
       ext = ext2.text
+      return (ext)
     
     await msg.edit("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
     async with bot.conversation(update.message.chat_id) as cv2:
       ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd
       ffcmd3 = ffcmd2.text
+      return (ffcmd3)
     
     #await asyncio.sleep(30)
     await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
@@ -74,7 +78,7 @@ async def echo(update):
     finalcmd = f"ffmpeg -i '{file_path}' {ffcmd3} '{file_loc2}' -y"
     
     await msg.edit(f"{finalcmd}\n\nEncoding ...\n\n**plz wait😍...**")
-    
+##############################################################
     try:
       out, err, rcode, pid = await execute(f"{finalcmd}")
       if rcode != 0:
@@ -91,7 +95,9 @@ async def echo(update):
             
       #c_time = time.time()
     except Exception as e:
-      print(e)  
+      print(e)
+      await msg.edit(f"Encoding Failed\n\n**Error:** {e}")
+##############################################################      
     try:
       await bot.send_file(
         update.message.chat_id,
@@ -101,11 +107,14 @@ async def echo(update):
       )
     except Exception as e:
       print(e)
-      #await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
-
-    os.remove(file_path)
-    os.remove(file_loc2)
-
+      await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
+##############################################################
+    try:
+      os.remove(file_path)
+      os.remove(file_loc2)
+    except:
+       pass
+##############################################################
 def main():
     """Start the bot."""
     print("\nBot started ...\n")
