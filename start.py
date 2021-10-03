@@ -55,17 +55,18 @@ async def echo(update):
     
     """ User Input Section """
     await asyncio.sleep(2)
-    mtemp = await msg.edit("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+    mtemp = await msg.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
     async with bot.conversation(update.message.chat_id) as cv:
       ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       ext2 = await ext1
       await mtemp.delete()
-      await ext2.reply(
+      mtemp2 = await ext2.reply(
             f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
         )
       #await msg.edit(f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`")
       ffcmd1 = cv.wait_event(events.NewMessage(update.message.chat_id))
       ffcmd2 = await ffcmd1
+      await mtemp2.delete()
     
     """ Encoding Section """
     await asyncio.sleep(2)
@@ -73,7 +74,7 @@ async def echo(update):
     ffcmd3 = ffcmd2.text
     ponlyname = os.path.splitext(file_path)[0]
     file_loc2 = f"{ponlyname}{ext3}"
-    ffcmd4 = f"ffmpeg -i '{file_path}' {ffcmd3} '{file_loc2}' -y"
+    ffcmd4 = f"ffmpeg -i '{file_path}' '{ffcmd3}' '{file_loc2}' -y"
     await msg.edit(f"{ffcmd4}\n\nEncoding ...\n\n**plz wait😍...**")
     await asyncio.sleep(2)
     out, err, rcode, pid = await execute(f"{ffcmd4}")
