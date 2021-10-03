@@ -53,19 +53,27 @@ async def echo(update):
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
-        
-    async with bot.conversation(await update.get_chat()) as cv:
-      await msg.edit("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
-      ext1 = (await cv.get_response()).raw_text
-      await msg.edit("**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`")
-      ffcmd1 = (await cv.get_response()).raw_text
     
-    ponlyname = os.path.splitext(file_path)[0]
-    file_loc2 = f"{ponlyname}{ext1}"
-    ffcmd = f"ffmpeg -i '{file_path}' {ffcmd1} '{file_loc2}' -y"
+    await msg.edit("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+    async with bot.conversation(update.message.chat_id) as cv:
+      ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
+      ext2 = await ext1
+      await ext2.reply(
+            f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
+        )
+      #await msg.edit(f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`")
+      ffcmd1 = cv.wait_event(events.NewMessage(update.message.chat_id))
+      ffcmd2 = await ffcmd
+    
     await asyncio.sleep(2)
+    ext3 = ext2.text
+    ffcmd3 = ffcmd2.text
+    ponlyname = os.path.splitext(file_path)[0]
+    file_loc2 = f"{ponlyname}{ext3}"
+    ffcmd4 = f"ffmpeg -i '{file_path}' {ffcmd3} '{file_loc2}' -y"
     await msg.edit(f"{ffcmd}\n\nEncoding ...\n\n**plz wait😍...**")
-    out, err, rcode, pid = await execute(f"{ffcmd}")
+    await asyncio.sleep(2)
+    out, err, rcode, pid = await execute(f"{ffcmd4}")
     if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
