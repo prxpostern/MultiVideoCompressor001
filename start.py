@@ -14,8 +14,6 @@ api_hash = os.environ.get("API_HASH")
 bot_token =os.environ.get("BOT_TOKEN")
                           
 download_path = "Downloads/"
-ext0 = ""
-ffcmd0 = ""
 
 bot = TelegramClient('Uploader bot', api_id, api_hash).start(bot_token=bot_token)
 
@@ -34,6 +32,8 @@ async def start(event):
 
 @bot.on(events.NewMessage)
 async def echo(update):
+    ext0 = "ba"
+    ffcmd0 = "ab"
     """Echo the user message."""
     msg = await update.respond("Processing Plz Wait😁...")
     
