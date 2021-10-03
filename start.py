@@ -6,6 +6,7 @@ import time
 import datetime
 import aiohttp
 import asyncio
+from tools import execute
 
 api_id = int(os.environ.get("API_ID"))
 api_hash = os.environ.get("API_HASH")
@@ -32,11 +33,14 @@ async def start(event):
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
     """Echo the user message."""
-    msg = await update.respond("Send Your Media or URL Link to Start Encoding...")
+    msg1 = await update.respond("Send Your Media or URL Link to Start Encoding...")
     async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
 
+    await msg1.delete()
+    msg = await update.respond("Downloading...")
     try:
+                                                                            """Downloading Section."""
         if not os.path.isdir(download_path):
             os.mkdir(download_path)
             
@@ -53,7 +57,49 @@ async def echo(update):
             
         print(f"file downloaded to {file_path}")
         try:
+                                                                             """ User Input Section """
             await msg.edit(f"{file_path}")
+            await update2.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+            async with bot.conversation(update.message.chat_id) as cv:
+              ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+            
+            await update2.reply(
+              f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
+            )
+            async with bot.conversation(update.message.chat_id) as cv:
+              ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+            
+                                                                            """ Encoding Section """
+            ext2 = ext1.text
+            ffcmd2 = ffcmd1.text
+            ponlyname = os.path.splitext(file_path)[0]
+            file_loc2 = f"{ponlyname}{ext2}"
+            size = os.path.getsize(file_loc2)
+            size_of_file = get_size(size)
+            name = os.path.basename(file_loc2)
+            ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
+            await msg.edit(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
+            #await asyncio.sleep(2)
+      
+            out, err, rcode, pid = await execute(f"{ffcmd4}")
+            if rcode != 0:
+              await msg.edit("**Error Occured. See Logs for more info.**")
+              print(err)
+                                                                           """Uploading Section."""
+            await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
+            try:
+              await bot.send_file(
+                update.message.chat_id,
+                file=file_loc2,
+                caption=f"`{name}` \n `{size_of_file}`",
+                reply_to=update.message
+              )
+            except Exception as e:
+              print(e)
+              await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
+                                                                           """ Cleaning Section """
+            os.remove(file_path)
+            os.remove(file_loc2)
 
         except Exception as e:
             print(e)
@@ -63,7 +109,7 @@ async def echo(update):
             print("Deleted file :", file_path)
     except Exception as e:
         print(e)
-        await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
+        await msg.edit(f"Download link is invalid or not accessable\n\n**Error:** {e}")
 
 def main():
     """Start the bot."""
