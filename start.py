@@ -28,14 +28,14 @@ async def start(event):
             "Backup Channel":"https://t.me/disneygroubackup"}
     buttons = [[Button.url(k, v)] for k,v in dict_.items()]
 
-    await event.respond('Hi!\nMy Name Is Disney Team Transfer Uploader Bot Send me any file or direct download link and I upload and get the transfer.sh download link Bot Made by ❤ In 🇮🇳India by [Doreamonfans](https://t.me/doreamonfans2)', buttons=buttons)
+    await event.respond('Hi!')
     raise events.StopPropagation
 
 @bot.on(events.NewMessage)
 async def echo(update):
     """Echo the user message."""
     msg = await update.respond("Processing Plz Wait😁...")
-##############################################################
+    
     try:
         if not os.path.isdir(download_path):
             os.mkdir(download_path)
@@ -46,79 +46,53 @@ async def echo(update):
             await msg.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
                 progress(d, t, msg, start)))
-            tgfilemsg = await update.respond(f"Telegram File is Downloaded in : \n\n {file_path}")
         else:
             url = update.text
             filename = os.path.join(download_path, os.path.basename(url))
             file_path = await download_file(update.text, filename, msg, start, bot)
-            urlfilemsg = await update.respond(f"URL File is Downloaded in : \n\n {file_path}")
     except Exception as e:
         print(e)
-        await msg.edit(f"Download link is invalid or not accessable !\n\n**Error:** {e}")
-##############################################################
-    extmsg = await update.respond(f"**Enter The Extension with . : like .mkv, .m4a, .wmv, .mp3 ...\n\n for video files use video extension and for audio use audio extension**")
-    async with bot.conversation(update.message.chat_id) as cv:
-      ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
-      ext2 = await ext1
-      ext = ext2.text
-      #await cv.cancel_all()
+        await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
+        
+    async with bot.conversation(await update.get_chat()) as cv:
+      await msg.edit("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+      ext1 = (await cv.get_response()).raw_text
+      await msg.edit("**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`")
+      ffcmd1 = (await cv.get_response()).raw_text
     
-    await extmsg.delete()
-    
-    ffcmdmsg = await update.respond("**Enter FFmpeg Commands : must include -c:s -c:v -c:a**")
-    async with bot.conversation(update.message.chat_id) as cv2:
-      ffcmd = cv2.wait_event(events.NewMessage(update.message.chat_id))
-      ffcmd2 = await ffcmd
-      ffcmd3 = ffcmd2.text
-      #await cv2.cancel_all()
-    
-    await ffcmdmsg.delete()
-    
-    await asyncio.sleep(10)
-    await msg.edit(f"Encoding ...\n\n**plz wait😍...**")
-  
     ponlyname = os.path.splitext(file_path)[0]
-    file_loc2 = f"{ponlyname}{ext}"
-    finalcmd = f"ffmpeg -i '{file_path}' {ffcmd3} '{file_loc2}' -y"
-    
-    await msg.edit(f"{finalcmd}\n\nEncoding ...\n\n**plz wait😍...**")
-##############################################################
-    try:
-      out, err, rcode, pid = await execute(f"{finalcmd}")
-      if rcode != 0:
+    file_loc2 = f"{ponlyname}{ext1}"
+    ffcmd = f"ffmpeg -i '{file_path}' {ffcmd1} '{file_loc2}' -y"
+    await asyncio.sleep(2)
+    await msg.edit(f"{ffcmd}\n\nEncoding ...\n\n**plz wait😍...**")
+    out, err, rcode, pid = await execute(f"{ffcmd}")
+    if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
+              
+    await asyncio.sleep(2)
+    size = os.path.getsize(file_loc2)
+    size_of_file = get_size(size)
+    name = os.path.basename(file_loc2)
+    #onlyfilename = os.path.splitext(name)[0]
 
-      size = os.path.getsize(file_loc2)
-      size_of_file = get_size(size)
-      bonlyname = os.path.basename(file_loc2)[0]
-      #name1 = os.path.basename(newName)
-      #onlyfilename = os.path.splitext(name1)[0]
+    await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
             
-      #await msg.edit(f"**Name: **`{bonlyname}`\n is Uploading ....**")
-            
-      #c_time = time.time()
-    except Exception as e:
-      print(e)
-      await msg.edit(f"Encoding Failed\n\n**Error:** {e}")
-##############################################################      
+    c_time = time.time()    
     try:
       await bot.send_file(
         update.message.chat_id,
         file=file_loc2,
-        caption=f"**Filename: **`{bonlyname}` \n\n **Size: **`{size_of_file}`",
+        caption=f"`{name}` \n `{size_of_file}`",
         reply_to=update.message
       )
     except Exception as e:
       print(e)
       await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
-##############################################################
-    try:
-      os.remove(file_path)
-      os.remove(file_loc2)
-    except:
-       pass
-##############################################################
+
+    os.remove(file_path)
+    os.remove(file_loc2)
+
 def main():
     """Start the bot."""
     print("\nBot started ...\n")
