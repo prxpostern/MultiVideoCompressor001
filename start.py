@@ -14,14 +14,7 @@ api_hash = os.environ.get("API_HASH")
 bot_token =os.environ.get("BOT_TOKEN")
                           
 download_path = "Downloads/"
-""" Global Variables """
-global ext0
-global ext1
-global ext2
-global ffcmd0
-global ffcmd1
-global ffcmd2
-global file_path
+
 
 bot = TelegramClient('Uploader bot', api_id, api_hash).start(bot_token=bot_token)
 
@@ -42,6 +35,14 @@ async def start(event):
 async def echo(update):
     """Echo the user message."""
     msg = await update.respond("Processing Plz Wait😁...")
+    """ Global Variables """
+    global ext0
+    global ext1
+    global ext2
+    global ffcmd0
+    global ffcmd1
+    global ffcmd2
+    global file_path
         
     try:
         if not os.path.isdir(download_path):
@@ -57,9 +58,11 @@ async def echo(update):
         elif not update.message.message.startswith("http") and not update.message.media and update.message.message.startswith(".") :
             ext0 = "bbb"
             ext2 = update.text
+            ffcmd0 = "aaa"
         elif not update.message.message.startswith("http") and not update.message.media and update.message.message.startswith("-") :
             ffcmd0 = "bbb"
             ffcmd2 = update.text
+            ext0 = "bbb"
         else:
             ext0 = "aaa"
             ffcmd0 = "aaa"
