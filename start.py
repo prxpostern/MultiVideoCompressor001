@@ -27,18 +27,18 @@ async def start(event):
             "Backup Channel":"https://t.me/disneygroubackup"}
     buttons = [[Button.url(k, v)] for k,v in dict_.items()]
 
-    await event.respond('Hi!\nMy Name Is Disney Team Transfer Uploader Bot Send me any file or direct download link and I upload and get the transfer.sh download link Bot Made by ❤ In 🇮🇳India by [Doreamonfans](https://t.me/doreamonfans2)', buttons=buttons)
+    await event.respond(f"Hi!\nSend /encode and follow the steps")
     raise events.StopPropagation
 
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
-    """Echo the user message."""
-    msg1 = await update.respond("Send Your Media or URL Link to Start Encoding...")
+                                                                            """Echo the user message."""
+    msg1 = await update.respond("Step1: Send Your Media File or URL ...")
     async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
 
     await msg1.delete()
-    msg = await update.respond("Downloading...")
+    msg2 = await update.respond("Downloading...")
     try:
                                                                             """Downloading Section."""
         if not os.path.isdir(download_path):
@@ -47,27 +47,28 @@ async def echo(update):
         start = time.time()
         
         if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
-            await msg.edit("**Downloading starting😉...**")
+            await msg2.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update2.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                progress(d, t, msg, start)))
+                progress(d, t, msg2, start)))
         else:
             url = update2.text
             filename = os.path.join(download_path, os.path.basename(url))
-            file_path = await download_file(update2.text, filename, msg, start, bot)
+            file_path = await download_file(update2.text, filename, msg2, start, bot)
             
         print(f"file downloaded to {file_path}")
         try:
                                                                              """ User Input Section """
-            await msg.edit(f"{file_path}")
-            await update2.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+            await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
+            msg3 = await update2.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
             async with bot.conversation(update.message.chat_id) as cv:
               ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-            
-            await update2.reply(
+            await msg3.delete()
+            msg4 = await ext1.reply(
               f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
             )
             async with bot.conversation(update.message.chat_id) as cv:
               ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+            await msg4.delete()  
             
                                                                             """ Encoding Section """
             ext2 = ext1.text
