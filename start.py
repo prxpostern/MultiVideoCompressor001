@@ -103,7 +103,7 @@ async def echo(update):
            print("Deleted file :", file_loc2)
     except Exception as e:
         print(e)
-        await msg.edit(f"Download link is invalid or not accessable\n\n**Error:** {e}")
+        await msg5.edit(f"Download link is invalid or not accessable\n\n**Error:** {e}")
 
 def main():
     """Start the bot."""
