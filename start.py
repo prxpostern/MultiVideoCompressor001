@@ -54,6 +54,7 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
+    await asyncio.sleep(2)
     await msg.edit("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
     async with bot.conversation(update.message.chat_id) as cv:
       ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
