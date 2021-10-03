@@ -99,10 +99,10 @@ async def echo(update):
               await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
             """ Cleaning Section """
             finally:
-            os.remove(file_path)
-            os.remove(file_loc2)
-            print("Deleted file :", file_path)
-            print("Deleted file :", file_loc2)
+              os.remove(file_path)
+              os.remove(file_loc2)
+              print("Deleted file :", file_path)
+              print("Deleted file :", file_loc2)
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable\n\n**Error:** {e}")
