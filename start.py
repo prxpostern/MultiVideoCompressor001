@@ -82,43 +82,44 @@ async def echo(update):
         #await mtemp2.delete()
     
     """ Encoding Section """
-    await asyncio.sleep(2)
-    ext3 = ext2.text
-    ffcmd3 = ffcmd2.text
-    ponlyname = os.path.splitext(file_path)[0]
-    file_loc2 = f"{ponlyname}{ext3}"
-    ffcmd4 = f"ffmpeg -i {file_path} {ffcmd3} {file_loc2} -y"
-    await msg.edit(f"{ffcmd4}\n\nEncoding ...\n\n**plz wait😍...**")
-    await asyncio.sleep(2)
-    out, err, rcode, pid = await execute(f"'{ffcmd4}'")
-    if rcode != 0:
+    if ext0 == "bbb" and ffcmd0 == "bbb":
+      await asyncio.sleep(2)
+      ext3 = ext2.text
+      ffcmd3 = ffcmd2.text
+      ponlyname = os.path.splitext(file_path)[0]
+      file_loc2 = f"{ponlyname}{ext3}"
+      ffcmd4 = f"ffmpeg -i {file_path} {ffcmd3} {file_loc2} -y"
+      await msg.edit(f"{ffcmd4}\n\nEncoding ...\n\n**plz wait😍...**")
+      await asyncio.sleep(2)
+      out, err, rcode, pid = await execute(f"'{ffcmd4}'")
+      if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
               
-    """ Uploading Media Section """
-    await asyncio.sleep(2)
-    size = os.path.getsize(file_loc2)
-    size_of_file = get_size(size)
-    name = os.path.basename(file_loc2)
-    #onlyfilename = os.path.splitext(name)[0]
+      """ Uploading Media Section """
+      await asyncio.sleep(2)
+      size = os.path.getsize(file_loc2)
+      size_of_file = get_size(size)
+      name = os.path.basename(file_loc2)
+      #onlyfilename = os.path.splitext(name)[0]
 
-    await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
+      await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
             
-    c_time = time.time()    
-    try:
-      await bot.send_file(
-        update.message.chat_id,
-        file=file_loc2,
-        caption=f"`{name}` \n `{size_of_file}`",
-        reply_to=update.message
-      )
-    except Exception as e:
-      print(e)
-      await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
+      c_time = time.time()    
+      try:
+        await bot.send_file(
+          update.message.chat_id,
+          file=file_loc2,
+          caption=f"`{name}` \n `{size_of_file}`",
+          reply_to=update.message
+        )
+      except Exception as e:
+        print(e)
+        await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
 
-    """ Cleaning Section """
-    os.remove(file_path)
-    os.remove(file_loc2)
+      """ Cleaning Section """
+      os.remove(file_path)
+      os.remove(file_loc2)
 
 def main():
     """Start the bot."""
