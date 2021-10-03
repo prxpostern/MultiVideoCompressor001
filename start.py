@@ -32,7 +32,7 @@ async def start(event):
 
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
-                                                                            """Echo the user message."""
+    """Echo the user message."""
     msg1 = await update.respond(f"Step1: Send Your Media File or URL")
     async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
@@ -40,7 +40,7 @@ async def echo(update):
     await msg1.delete()
     msg2 = await update.respond("Downloading...")
     try:
-                                                                            """Downloading Section."""
+        """Downloading Section."""
         if not os.path.isdir(download_path):
             os.mkdir(download_path)
             
@@ -56,7 +56,7 @@ async def echo(update):
             
         print(f"file downloaded to {file_path}")
         try:
-                                                                             """ User Input Section """
+            """ User Input Section """
             await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
             msg3 = await update2.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
             async with bot.conversation(update.message.chat_id) as cv:
@@ -69,7 +69,7 @@ async def echo(update):
               ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
             await msg4.delete()  
             
-                                                                            """ Encoding Section """
+            """ Encoding Section """
             ext2 = ext1.text
             ffcmd2 = ffcmd1.text
             ponlyname = os.path.splitext(file_path)[0]
@@ -85,7 +85,7 @@ async def echo(update):
             if rcode != 0:
               await msg5.edit("**Error Occured. See Logs for more info.**")
               print(err)
-                                                                           """Uploading Section."""
+            """Uploading Section."""
             await msg5.edit(f"**Name: **`{name}`\n is Uploading ....**")
             try:
               await bot.send_file(
@@ -97,7 +97,7 @@ async def echo(update):
             except Exception as e:
               print(e)
               await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
-                                                                           """ Cleaning Section """
+            """ Cleaning Section """
             finally:
             os.remove(file_path)
             os.remove(file_loc2)
