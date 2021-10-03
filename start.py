@@ -41,7 +41,6 @@ async def echo(update):
             os.mkdir(download_path)
             
         start = time.time()
-        
         if not update.message.message.startswith("/") and not update.message.message.startswith("http") and update.message.media:
             await msg.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
@@ -54,6 +53,7 @@ async def echo(update):
         print(e)
         await msg.edit(f"Download link is invalid or not accessable contact my [owner](https://t.me/doreamonfans1)\n\n**Error:** {e}")
     
+    """ User Input Section """
     await asyncio.sleep(2)
     await msg.edit("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
     async with bot.conversation(update.message.chat_id) as cv:
@@ -64,8 +64,9 @@ async def echo(update):
         )
       #await msg.edit(f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`")
       ffcmd1 = cv.wait_event(events.NewMessage(update.message.chat_id))
-      ffcmd2 = await ffcmd
+      ffcmd2 = await ffcmd1
     
+    """ Encoding Section """
     await asyncio.sleep(2)
     ext3 = ext2.text
     ffcmd3 = ffcmd2.text
@@ -79,6 +80,7 @@ async def echo(update):
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
               
+    """ Uploading Media Section """
     await asyncio.sleep(2)
     size = os.path.getsize(file_loc2)
     size_of_file = get_size(size)
@@ -99,6 +101,7 @@ async def echo(update):
       print(e)
       await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
 
+    """ Cleaning Section """
     os.remove(file_path)
     os.remove(file_loc2)
 
