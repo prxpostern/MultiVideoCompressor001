@@ -36,25 +36,26 @@ async def echo(update):
     #ffcmd0 = "ab"
     """Echo the user message."""
     #if ext0 == "ab" and ffcmd0 = "ab"
-    msg = await update.respond("Processing Plz Wait😁...")
-    
+        
     try:
         if not os.path.isdir(download_path):
             os.mkdir(download_path)
             
         start = time.time()
         if not update.message.message.startswith("/") and not update.message.message.startswith("http") and update.message.media:
+            msg = await update.respond("Processing Plz Wait😁...")
             ext0 = "aaa"
             ffcmd0 = "aaa"
             await msg.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
                 progress(d, t, msg, start)))
 
-        elif update.text and update.message.message.startswith(".") :
+        elif not update.message.message.startswith("http") and not update.message.media and update.message.message.startswith(".") :
             ext0 = "bbb"
-        elif update.text and update.message.message.startswith("-") :
+        elif not update.message.message.startswith("http") and not update.message.media and update.message.message.startswith("-") :
             ffcmd0 = "bbb"
         else:
+            msg = await update.respond("Processing Plz Wait😁...")
             url = update.text
             filename = os.path.join(download_path, os.path.basename(url))
             file_path = await download_file(update.text, filename, msg, start, bot)
@@ -85,12 +86,12 @@ async def echo(update):
     """ Encoding Section """
     if ext0 == "bbb" and ffcmd0 == "bbb":
       await asyncio.sleep(2)
-      ext3 = ext2.text
-      ffcmd3 = ffcmd2.text
+      ext3 = ext1.text
+      ffcmd3 = ffcmd1.text
       ponlyname = os.path.splitext(file_path)[0]
       file_loc2 = f"{ponlyname}{ext3}"
       ffcmd4 = f"ffmpeg -i {file_path} {ffcmd3} {file_loc2} -y"
-      await msg.edit(f"{ffcmd4}\n\nEncoding ...\n\n**plz wait😍...**")
+      await msg.edit(f"'{ffcmd4}'\n\nEncoding ...\n\n**plz wait😍...**")
       await asyncio.sleep(2)
       out, err, rcode, pid = await execute(f"'{ffcmd4}'")
       if rcode != 0:
