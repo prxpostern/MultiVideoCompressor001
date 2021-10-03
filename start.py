@@ -14,6 +14,14 @@ api_hash = os.environ.get("API_HASH")
 bot_token =os.environ.get("BOT_TOKEN")
                           
 download_path = "Downloads/"
+""" Global Variables """
+global ext0
+global ext1
+global ext2
+global ffcmd0
+global ffcmd1
+global ffcmd2
+global file_path
 
 
 bot = TelegramClient('Uploader bot', api_id, api_hash).start(bot_token=bot_token)
@@ -35,15 +43,7 @@ async def start(event):
 async def echo(update):
     """Echo the user message."""
     msg = await update.respond("Processing Plz Wait😁...")
-    """ Global Variables """
-    global ext0
-    global ext1
-    global ext2
-    global ffcmd0
-    global ffcmd1
-    global ffcmd2
-    global file_path
-        
+
     try:
         if not os.path.isdir(download_path):
             os.mkdir(download_path)
@@ -83,7 +83,7 @@ async def echo(update):
         ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
         #ext2 = await ext1
         
-    if ext0 == "bbb":
+    if ext0 == "bbb" and ffcmd0 == "aaa":
       await msg.reply(
           f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
         )
@@ -99,19 +99,21 @@ async def echo(update):
       #ffcmd3 = ffcmd1.text
       ponlyname = os.path.splitext(file_path)[0]
       file_loc2 = f"{ponlyname}{ext2}"
+      size = os.path.getsize(file_loc2)
+      size_of_file = get_size(size)
+      name = os.path.basename(file_loc2)
       ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
-      await msg.edit(f"'{ffcmd4}'\n\nEncoding ...\n\n**plz wait😍...**")
+      await msg.edit(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
       await asyncio.sleep(2)
-      out, err, rcode, pid = await execute(f"'{ffcmd4}'")
+      
+      out, err, rcode, pid = await execute(f"{ffcmd4}")
       if rcode != 0:
         await msg.edit("**Error Occured. See Logs for more info.**")
         print(err)
               
       """ Uploading Media Section """
       await asyncio.sleep(2)
-      size = os.path.getsize(file_loc2)
-      size_of_file = get_size(size)
-      name = os.path.basename(file_loc2)
+      
       #onlyfilename = os.path.splitext(name)[0]
 
       await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
