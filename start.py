@@ -73,8 +73,6 @@ async def echo(update):
         ffcmd2 = ffcmd1.text
         ponlyname = os.path.splitext(file_path)[0]
         file_loc2 = f"{ponlyname}{ext2}"
-        size = os.path.getsize(file_loc2)
-        size_of_file = get_size(size)
         name = os.path.basename(file_loc2)
         ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
         msg5 = await ffcmd1.reply(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
@@ -83,6 +81,8 @@ async def echo(update):
         if rcode != 0:
           await msg5.edit("**Error Occured. See Logs for more info.**")
           print(err)
+        size = os.path.getsize(file_loc2)
+        size_of_file = get_size(size)
         """Uploading Section."""
         await msg5.edit(f"**Name: **`{name}`\n is Uploading ....**")
         try:
