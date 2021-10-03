@@ -45,7 +45,6 @@ async def echo(update):
             os.mkdir(download_path)
             
         start = time.time()
-        
         if not update2.message.message.startswith("/") and not update2.message.message.startswith("http") and update2.message.media:
             await msg2.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update2.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
@@ -79,15 +78,15 @@ async def echo(update):
             size_of_file = get_size(size)
             name = os.path.basename(file_loc2)
             ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
-            await msg.edit(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
+            msg5 = await ffcmd1.reply(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
             #await asyncio.sleep(2)
       
             out, err, rcode, pid = await execute(f"{ffcmd4}")
             if rcode != 0:
-              await msg.edit("**Error Occured. See Logs for more info.**")
+              await msg5.edit("**Error Occured. See Logs for more info.**")
               print(err)
                                                                            """Uploading Section."""
-            await msg.edit(f"**Name: **`{name}`\n is Uploading ....**")
+            await msg5.edit(f"**Name: **`{name}`\n is Uploading ....**")
             try:
               await bot.send_file(
                 update.message.chat_id,
@@ -97,17 +96,13 @@ async def echo(update):
               )
             except Exception as e:
               print(e)
-              await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
+              await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
                                                                            """ Cleaning Section """
+            finally:
             os.remove(file_path)
             os.remove(file_loc2)
-
-        except Exception as e:
-            print(e)
-            await msg.edit(f"Uploading Failed\n\n**Error:** {e}")
-        finally:
-            os.remove(file_path)
             print("Deleted file :", file_path)
+            print("Deleted file :", file_loc2)
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable\n\n**Error:** {e}")
