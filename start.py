@@ -14,6 +14,14 @@ api_hash = os.environ.get("API_HASH")
 bot_token =os.environ.get("BOT_TOKEN")
                           
 download_path = "Downloads/"
+""" Global Variables """
+global ext0
+global ext1
+global ext2
+global ffcmd0
+global ffcmd1
+global ffcmd2
+global file_path
 
 bot = TelegramClient('Uploader bot', api_id, api_hash).start(bot_token=bot_token)
 
@@ -32,10 +40,8 @@ async def start(event):
 
 @bot.on(events.NewMessage)
 async def echo(update):
-    #ext0 = "ab"
-    #ffcmd0 = "ab"
     """Echo the user message."""
-    #if ext0 == "ab" and ffcmd0 = "ab"
+    msg = await update.respond("Processing Plz Wait😁...")
         
     try:
         if not os.path.isdir(download_path):
@@ -43,10 +49,8 @@ async def echo(update):
             
         start = time.time()
         if not update.message.message.startswith("/") and not update.message.message.startswith("http") and update.message.media:
-            msg = await update.respond("Processing Plz Wait😁...")
             ext0 = "aaa"
             ffcmd0 = "aaa"
-            await msg.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
                 progress(d, t, msg, start)))
 
@@ -71,11 +75,10 @@ async def echo(update):
     """ User Input Section """
     await asyncio.sleep(2)
     if ext0 == "aaa" and ffcmd0 == "aaa":
-      mtemp = await msg.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+      await msg.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
       async with bot.conversation(update.message.chat_id) as cv:
         ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
         #ext2 = await ext1
-        #await mtemp.delete()
         
     if ext0 == "bbb":
       await msg.reply(
