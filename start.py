@@ -75,7 +75,7 @@ async def echo(update):
         file_loc2 = f"{ponlyname}{ext2}"
         name = os.path.basename(file_loc2)
         ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
-        msg5 = await ffcmd1.reply(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
+        msg5 = await ffcmd1.reply(f"{ffcmd4}\n\nEncoding ...\n\n**plz wait😍...**")
         #await asyncio.sleep(2)
         out, err, rcode, pid = await execute(f"{ffcmd4}")
         if rcode != 0:
