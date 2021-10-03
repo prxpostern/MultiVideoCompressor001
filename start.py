@@ -55,45 +55,43 @@ async def echo(update):
             file_path = await download_file(update2.text, filename, msg2, start, bot)
             
         print(f"file downloaded to {file_path}")
-        try:
-            """ User Input Section """
-            await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
-            msg3 = await update2.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
-            async with bot.conversation(update.message.chat_id) as cv:
-              ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-            await msg3.delete()
-            msg4 = await ext1.reply(
+        """ User Input Section """
+        await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
+        msg3 = await update2.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+        async with bot.conversation(update.message.chat_id) as cv:
+          ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+        await msg3.delete()
+        msg4 = await ext1.reply(
               f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
-            )
-            async with bot.conversation(update.message.chat_id) as cv:
-              ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-            await msg4.delete()  
+        )
+        async with bot.conversation(update.message.chat_id) as cv:
+          ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+        await msg4.delete()  
             
-            """ Encoding Section """
-            ext2 = ext1.text
-            ffcmd2 = ffcmd1.text
-            ponlyname = os.path.splitext(file_path)[0]
-            file_loc2 = f"{ponlyname}{ext2}"
-            size = os.path.getsize(file_loc2)
-            size_of_file = get_size(size)
-            name = os.path.basename(file_loc2)
-            ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
-            msg5 = await ffcmd1.reply(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
-            #await asyncio.sleep(2)
-      
-            out, err, rcode, pid = await execute(f"{ffcmd4}")
-            if rcode != 0:
-              await msg5.edit("**Error Occured. See Logs for more info.**")
-              print(err)
-            """Uploading Section."""
-            await msg5.edit(f"**Name: **`{name}`\n is Uploading ....**")
-            try:
-              await bot.send_file(
-                update.message.chat_id,
-                file=file_loc2,
-                caption=f"`{name}` \n `{size_of_file}`",
-                reply_to=update.message
-              )
+        """ Encoding Section """
+        ext2 = ext1.text
+        ffcmd2 = ffcmd1.text
+        ponlyname = os.path.splitext(file_path)[0]
+        file_loc2 = f"{ponlyname}{ext2}"
+        size = os.path.getsize(file_loc2)
+        size_of_file = get_size(size)
+        name = os.path.basename(file_loc2)
+        ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
+        msg5 = await ffcmd1.reply(f"{ffcmd4}\n\nEncoding ...\n\n{size_of_file}\n\n**plz wait😍...**")
+        #await asyncio.sleep(2)
+        out, err, rcode, pid = await execute(f"{ffcmd4}")
+        if rcode != 0:
+          await msg5.edit("**Error Occured. See Logs for more info.**")
+          print(err)
+        """Uploading Section."""
+        await msg5.edit(f"**Name: **`{name}`\n is Uploading ....**")
+        try:
+          await bot.send_file(
+            update.message.chat_id,
+            file=file_loc2,
+            caption=f"`{name}` \n `{size_of_file}`",
+            reply_to=update.message
+          )
             except Exception as e:
               print(e)
               await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
@@ -114,3 +112,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+            
