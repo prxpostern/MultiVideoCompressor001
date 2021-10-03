@@ -52,15 +52,18 @@ async def echo(update):
 
         elif not update.message.message.startswith("http") and not update.message.media and update.message.message.startswith(".") :
             ext0 = "bbb"
+            ext1 = update.text
         elif not update.message.message.startswith("http") and not update.message.media and update.message.message.startswith("-") :
             ffcmd0 = "bbb"
+            ffcmd1 = update.text
         else:
+            ext0 = "aaa"
+            ffcmd0 = "aaa"
             msg = await update.respond("Processing Plz Wait😁...")
             url = update.text
             filename = os.path.join(download_path, os.path.basename(url))
             file_path = await download_file(update.text, filename, msg, start, bot)
-            ext0 = "aaa"
-            ffcmd0 = "aaa"
+
     except Exception as e:
         print(e)
         await msg.edit(f"Download link is invalid or not accessable \n\n **Error:** {e}")
@@ -75,7 +78,7 @@ async def echo(update):
         #await mtemp.delete()
         
     if ext0 == "bbb":
-      mtemp2 = await ext1.reply(
+      await msg.reply(
           f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
         )
       async with bot.conversation(update.message.chat_id) as cvv:
@@ -86,11 +89,11 @@ async def echo(update):
     """ Encoding Section """
     if ext0 == "bbb" and ffcmd0 == "bbb":
       await asyncio.sleep(2)
-      ext3 = ext1.text
-      ffcmd3 = ffcmd1.text
+      #ext3 = ext1.text
+      #ffcmd3 = ffcmd1.text
       ponlyname = os.path.splitext(file_path)[0]
-      file_loc2 = f"{ponlyname}{ext3}"
-      ffcmd4 = f"ffmpeg -i {file_path} {ffcmd3} {file_loc2} -y"
+      file_loc2 = f"{ponlyname}{ext1}"
+      ffcmd4 = f"ffmpeg -i {file_path} {ffcmd1} {file_loc2} -y"
       await msg.edit(f"'{ffcmd4}'\n\nEncoding ...\n\n**plz wait😍...**")
       await asyncio.sleep(2)
       out, err, rcode, pid = await execute(f"'{ffcmd4}'")
