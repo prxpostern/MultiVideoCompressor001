@@ -32,9 +32,10 @@ async def start(event):
 
 @bot.on(events.NewMessage)
 async def echo(update):
-    ext0 = "ba"
-    ffcmd0 = "ab"
+    #ext0 = "ab"
+    #ffcmd0 = "ab"
     """Echo the user message."""
+    #if ext0 == "ab" and ffcmd0 = "ab"
     msg = await update.respond("Processing Plz Wait😁...")
     
     try:
@@ -43,15 +44,16 @@ async def echo(update):
             
         start = time.time()
         if not update.message.message.startswith("/") and not update.message.message.startswith("http") and update.message.media:
+            ext0 = "aaa"
+            ffcmd0 = "aaa"
             await msg.edit("**Downloading starting😉...**")
             file_path = await bot.download_media(update.message, download_path, progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
                 progress(d, t, msg, start)))
-            ext0 = "aaa"
-            ffcmd0 = "aaa"
+
         elif update.text and update.message.message.startswith(".") :
-            ffcmd0 = "bbb"
-        elif update.text and update.message.message.startswith("-") :
             ext0 = "bbb"
+        elif update.text and update.message.message.startswith("-") :
+            ffcmd0 = "bbb"
         else:
             url = update.text
             filename = os.path.join(download_path, os.path.basename(url))
@@ -67,18 +69,17 @@ async def echo(update):
     if ext0 == "aaa" and ffcmd0 == "aaa":
       mtemp = await msg.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
       async with bot.conversation(update.message.chat_id) as cv:
-        ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
-        ext2 = await ext1
+        ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+        #ext2 = await ext1
         #await mtemp.delete()
-        mtemp2 = await ext2.reply(
+        
+    if ext0 == "bbb":
+      mtemp2 = await ext1.reply(
           f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
         )
-    if ffcmd0 == "bbb":
-      async with bot.conversation(update.message.chat_id) as cv:
-        ext1 = cv.wait_event(events.NewMessage(update.message.chat_id))
-        #await msg.edit(f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`")
-        ffcmd1 = cv.wait_event(events.NewMessage(update.message.chat_id))
-        ffcmd2 = await ffcmd1
+      async with bot.conversation(update.message.chat_id) as cvv:
+        ffcmd1 = await cvv.wait_event(events.NewMessage(update.message.chat_id))
+        #ffcmd2 = await ffcmd1
         #await mtemp2.delete()
     
     """ Encoding Section """
