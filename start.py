@@ -33,7 +33,7 @@ async def start(event):
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
                                                                             """Echo the user message."""
-    msg1 = await update.respond("Step1: Send Your Media File or URL ...")
+    msg1 = await update.respond(f"Step1: Send Your Media File or URL")
     async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
 
