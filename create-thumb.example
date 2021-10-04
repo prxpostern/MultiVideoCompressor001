@@ -1,3 +1,5 @@
+from Tools.screenshot import take_screen_shot
+
 thumb_image_path = await take_screen_shot(
                             media_location,
                             os.path.dirname(media_location),
