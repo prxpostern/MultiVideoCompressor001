@@ -91,9 +91,16 @@ async def echo(update):
         out, err, rcode, pid = await execute(f"{ffcmd4}")
         if rcode != 0:
           await msg5.edit("**FFmpeg: Error Occured. See Logs for more info.**")
+          os.remove(file_path)
+          os.remove(file_loc2)
+          print("Deleted file :", file_path)
+          print("Deleted file :", file_loc2)
           print(err)
+          return
+        
         size = os.path.getsize(file_loc2)
         size_of_file = get_size(size)
+        
         """Uploading Section."""
         await msg5.edit(f"**Name: **`{name}` \n\n is Uploading to Telegram ....**")
         try:
