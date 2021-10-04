@@ -26,11 +26,11 @@ async def start(event):
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
     """Echo the user message."""
-    msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n To Cancel press /cancel")
+    msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n\n To Cancel press /cancel")
     async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
         
-    if update2 == "/cancel":
+    if update2.text == "/cancel":
       await msg1.delete()
       await update.respond(f"Operation Cancelled By User. \n Send /encode to start again!")
       return
@@ -55,10 +55,10 @@ async def echo(update):
         
         """ User Input Section """
         await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
-        msg3 = await update2.reply("**Step2:** Enter Extension : like .mkv _320p.mp4 new.mp3 .aac _.mka**")
+        msg3 = await update2.reply("**Step2:** Enter Extension : like .mkv _320p.mp4 new.mp3 .aac _.mka \n\n To Cancel press /cancel")
         async with bot.conversation(update.message.chat_id) as cv:
           ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-        if ext1 == "/cancel":
+        if ext1.text == "/cancel":
           await msg2.delete()
           await msg3.delete()
           os.remove(file_path)
@@ -67,10 +67,15 @@ async def echo(update):
         await msg2.delete()
         await msg3.delete()
         msg4 = await ext1.reply(
-              f"**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4`"
+              f"**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4` \n\n To Cancel press /cancel"
         )
         async with bot.conversation(update.message.chat_id) as cv:
           ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+          if ffcmd1.text == "/cancel":
+            await msg4.delete()
+            os.remove(file_path)
+            await update.respond(f"Operation Cancelled By User. \n Send /encode to start again!")
+            return
         await msg4.delete()  
             
         """ Encoding Section """
@@ -80,11 +85,12 @@ async def echo(update):
         file_loc2 = f"{ponlyname}{ext2}"
         name = os.path.basename(file_loc2)
         ffcmd4 = f"ffmpeg -i {file_path} {ffcmd2} {file_loc2} -y"
-        msg5 = await ffcmd1.reply(f"{ffcmd4}\n\nEncoding ...\n\n**plz wait😍...**")
-        #await asyncio.sleep(2)
+        msg5 = await ffcmd1.reply(f"`{ffcmd4}` \n\n Encoding ... \n\n **plz wait😍...**")
+        await asyncio.sleep(1)
+        
         out, err, rcode, pid = await execute(f"{ffcmd4}")
         if rcode != 0:
-          await msg5.edit("**Error Occured. See Logs for more info.**")
+          await msg5.edit("**FFmpeg: Error Occured. See Logs for more info.**")
           print(err)
         size = os.path.getsize(file_loc2)
         size_of_file = get_size(size)
@@ -94,7 +100,7 @@ async def echo(update):
           await bot.send_file(
             update.message.chat_id,
             file=file_loc2,
-            caption=f"`{name}` \n `{size_of_file}`",
+            caption=f"`{name}` \n\n **Size:** `{size_of_file}`",
             reply_to=update.message
           )
         except Exception as e:
@@ -102,17 +108,19 @@ async def echo(update):
           await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
           """ Cleaning Section """
         finally:
+           await msg5.delete()
+           await update.respond(f"Send /encode to start new Encoding")
            os.remove(file_path)
            os.remove(file_loc2)
            print("Deleted file :", file_path)
            print("Deleted file :", file_loc2)
     except Exception as e:
         print(e)
-        await msg5.edit(f"Download link is invalid or not accessable\n\n**Error:** {e}")
+        await update.respond(f"Download link is invalid or not accessible ! \n\n **Error:** {e}")
 
 def main():
     """Start the bot."""
-    print("\nBot started visit @disneygrou For more updates...\n")
+    print("\nBot started ...\n")
     bot.run_until_disconnected()
 
 if __name__ == '__main__':
