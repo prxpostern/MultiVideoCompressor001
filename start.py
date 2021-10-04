@@ -95,7 +95,7 @@ async def echo(update):
         size = os.path.getsize(file_loc2)
         size_of_file = get_size(size)
         """Uploading Section."""
-        await msg5.edit(f"**Name: **`{name}`\n is Uploading ....**")
+        await msg5.edit(f"**Name: **`{name}` \n\n is Uploading to Telegram ....**")
         try:
           await bot.send_file(
             update.message.chat_id,
@@ -106,8 +106,15 @@ async def echo(update):
         except Exception as e:
           print(e)
           await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
-          """ Cleaning Section """
+        try:
+            await msg5.edit(f"**Name: **` \n {name}` \n\n is Uploading to transfer.sh ....**")
+            download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg5)
+            await update.respond(f"**Name: ** \n `{name}` \n **Size:** `{size}` \n **Link:** \n {download_link}")
+        except Exception as e:
+            print(e)
+            await msg5.edit(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
         finally:
+           """ Cleaning Section """
            await msg5.delete()
            await update.respond(f"Send /encode to start new Encoding")
            os.remove(file_path)
