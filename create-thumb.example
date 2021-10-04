@@ -1,0 +1,7 @@
+thumb_image_path = await take_screen_shot(
+                            media_location,
+                            os.path.dirname(media_location),
+                            random.randint(
+                                0,
+                                duration - 1
+                            )
