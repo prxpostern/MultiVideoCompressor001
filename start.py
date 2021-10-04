@@ -14,29 +14,26 @@ bot_token =os.environ.get("BOT_TOKEN")
                           
 download_path = "Downloads/"
 
-bot = TelegramClient('Uploader bot', api_id, api_hash).start(bot_token=bot_token)
+bot = TelegramClient('Encoder bot', api_id, api_hash).start(bot_token=bot_token)
 
 
 @bot.on(events.NewMessage(pattern='/start'))
 async def start(event):
     """Send a message when the command /start is issued."""
-    dict_ = {
-            "Updates Channel":"https://t.me/disneygrou",
-            "Support Group":"https://t.me/disneyteamchat",
-            "Developer":"https://t.me/Doreamonfans2",
-            "Backup Channel":"https://t.me/disneygroubackup"}
-    buttons = [[Button.url(k, v)] for k,v in dict_.items()]
-
     await event.respond(f"Hi!\nSend /encode and follow the steps")
     raise events.StopPropagation
 
 @bot.on(events.NewMessage(pattern='/encode'))
 async def echo(update):
     """Echo the user message."""
-    msg1 = await update.respond(f"Step1: Send Your Media File or URL")
+    msg1 = await update.respond(f"**Step1:** Send Your Media File or URL. \n To Cancel press /cancel")
     async with bot.conversation(update.message.chat_id) as cv:
         update2 = await cv.wait_event(events.NewMessage(update.message.chat_id))
-
+        
+    if update2 == "/cancel":
+      await msg1.delete()
+      await update.respond(f"Operation Cancelled By User. \n Send /encode to start again!")
+      return
     await msg1.delete()
     msg2 = await update.respond("Downloading...")
     try:
@@ -55,14 +52,22 @@ async def echo(update):
             file_path = await download_file(update2.text, filename, msg2, start, bot)
             
         print(f"file downloaded to {file_path}")
+        
         """ User Input Section """
         await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
-        msg3 = await update2.reply("**Enter Extension with dot: like .mkv .mp4 .mp3 .aac .mka**")
+        msg3 = await update2.reply("**Step2:** Enter Extension : like .mkv _320p.mp4 new.mp3 .aac _.mka**")
         async with bot.conversation(update.message.chat_id) as cv:
           ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
+        if ext1 == "/cancel":
+          await msg2.delete()
+          await msg3.delete()
+          os.remove(file_path)
+          await update.respond(f"Operation Cancelled By User. \n Send /encode to start again!")
+          return
+        await msg2.delete()
         await msg3.delete()
         msg4 = await ext1.reply(
-              f"**Enter FFmpeg Options: like **\n\n`-sn -vn -c:a copy` \n\n `-sn -vn -c:a libmp3lame -ar 48000 -ab 256k` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k`"
+              f"**Step3:** Enter FFmpeg Options: \n\n `-sn -vn -c:a copy` \n\n `-ar 48000 -ab 256k -f mp3` \n\n `-c:s copy -c:a copy -c:v libx264` \n\n `-c:v libx264 -s 320*240 -c:a libmp3lame -ar 48000 -ab 64k -f mp4`"
         )
         async with bot.conversation(update.message.chat_id) as cv:
           ffcmd1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
