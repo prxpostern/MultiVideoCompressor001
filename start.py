@@ -17,13 +17,18 @@ download_path = "Downloads/"
 bot = TelegramClient('Encoder bot', api_id, api_hash).start(bot_token=bot_token)
 
 HELP_TXT = """
-This is a FFmpeg robot. i can convert your media.
+I am a FFmpeg robot. I can convert All Type of Media.
 for using me, you have to know about ffmpeg options.
+
 the source and destination name must be deferent.
 press /encode to start the proccess. then send your
 media file or direct link. type your extension with ".".
-`.mkv` `_360p.mp4` `_new.aac` `2.mp3`.
+`.mkv`
+`_360p.mp4`
+`_new.aac`
+`2.mp3`.
 and finaly type your ffmpeg options.
+
 Examples:
 Extract Audio without encoding:
 `-vn -sn -c:a copy`
@@ -44,7 +49,7 @@ mp4 + aac resolution 720*576
 @bot.on(events.NewMessage(pattern='/start'))
 async def start(event):
     """Send a message when the command /start is issued."""
-    await event.respond(f"Hi!\nSend /encode and follow the steps")
+    await event.respond(f"Hi! see /help \n\n Send /encode . Follow the Steps")
     raise events.StopPropagation
     
 @bot.on(events.NewMessage(pattern='/help'))
@@ -148,7 +153,7 @@ async def echo(update):
         try:
             await msg5.edit(f"Uploading to transfer.sh... \n\n **Name: ** `{name}`")
             download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg5)
-            await update.respond(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** \n `{name}` \n **Size:** `{size}` \n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
+            await update.respond(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n **Size:** `{size}` \n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
         except Exception as e:
             print(e)
             await msg5.edit(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
