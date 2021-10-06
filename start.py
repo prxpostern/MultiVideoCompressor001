@@ -19,7 +19,6 @@ bot = TelegramClient('Encoder bot', api_id, api_hash).start(bot_token=bot_token)
 HELP_TXT = """
 I am a FFmpeg robot. I can convert All Type of Media.
 for using me, you have to know about ffmpeg options.
-
 the source and destination name must be deferent.
 press /encode to start the proccess. then send your
 media file or direct link. type your extension with ".".
@@ -28,20 +27,15 @@ media file or direct link. type your extension with ".".
 `_new.aac`
 `2.mp3`.
 and finaly type your ffmpeg options.
-
 Examples:
 Extract Audio without encoding:
 `-vn -sn -c:a copy`
-
 Extract Video without encoding:
 `-sn -an -c:v copy`
-
 mp3 bitrate 256k:
 `-c:a libmp3lame -ab 256k`
-
 trimm video - from minute 10 to minute 20:
 `-ss 00:10:00 -to 00:20:00 -c copy`
-
 mp4 + aac resolution 720*576
 `-c:v libx264 -s 720*576 -c:a aac -ab 64k`
 """
@@ -90,7 +84,7 @@ async def echo(update):
         
         """ User Input Section """
         await msg2.edit(f"Successfully Downloaded to : `{file_path}`")
-        msg3 = await update2.reply("**Step2:** Enter Extension : like .mkv _320p.mp4 new.mp3 .aac _.mka \n\n To Cancel press /cancel")
+        msg3 = await update2.reply("**Step2:** Enter The Extension : \n Examples: \n `_.mkv` \n `_320p.mp4` \n `new.mp3` \n `32k.aac` \n `_.mka` \n\n To Cancel press /cancel")
         async with bot.conversation(update.message.chat_id) as cv:
           ext1 = await cv.wait_event(events.NewMessage(update.message.chat_id))
         if ext1.text == "/cancel":
@@ -143,23 +137,25 @@ async def echo(update):
             update.message.chat_id,
             file=file_loc2,
             caption=f"`{name}` \n\n **Size:** `{size_of_file}`",
-            reply_to=update.message,
+            reply_to=update2.message,
             force_document=True,
             supports_streaming=False
           )
         except Exception as e:
           print(e)
-          await msg5.edit(f"Uploading Failed\n\n**Error:** {e}")
+          await update.respond(f"Uploading Failed\n\n**Error:** {e}")
+        
+        await msg5.delete()
+        msg6 = await update.respond(f"Uploading to transfer.sh... \n\n **Name: ** `{name}`")
         try:
-            await msg5.edit(f"Uploading to transfer.sh... \n\n **Name: ** `{name}`")
             download_link, final_date, size = await send_to_transfersh_async(file_loc2, msg5)
-            await update.respond(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n **Size:** `{size}` \n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
+            await msg6.edit(f"Successfully Uploaded to Transfer.sh! \n\n **Name: ** `{name}` \n\n **Size:** `{size}` \n\n **Link:** \n {download_link} \n **ExpireDate:** {final_date}")
         except Exception as e:
             print(e)
-            await msg5.edit(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
+            await update.respond(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")  
         finally:
            """ Cleaning Section """
-           await msg5.delete()
+           #await msg5.delete()
            await update.respond(f"Send /encode to start new Encoding")
            os.remove(file_path)
            os.remove(file_loc2)
